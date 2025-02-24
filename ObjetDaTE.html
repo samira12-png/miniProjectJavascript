@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: #c5deef;
+            padding: 10px;
+        }
+        fieldset{
+            background-color: rgb(231, 224, 216);
+            width: 30%;
+            margin: 50px auto;
+            padding: 10px;
+            border: 1px solid #998c8c;
+            border-radius: 10px;
+        }
+        div{
+            margin-top: 15px;
+        }
+        button{
+            margin: 10px;
+            background-color: #998c8c;
+            color: aliceblue;
+            padding: 7px;
+        }
+        legend{
+            font-size: 20px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background-color: rgb(128, 166, 222);
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <fieldset>
+        <legend>Simulateur de Calcul sur Les Dates</legend>
+        <form action="">
+            <div><i class="fa-solid fa-calendar-days"></i>&nbsp;Sélectionnez une date:</div>
+            <input type="date" id="date" name="date" required><br>
+            <div><i class="fa-solid fa-calendar"></i>&nbsp;Nombre de jours/mois/années:</div>
+            <input type="number" id="nbjours" name="nbjours" required><br>
+            <div><i class="fa-solid fa-thumbtack"></i>&nbsp;Type: 
+                <span>
+                <select name="choix" id="choix">
+                    <option value="jour">Jour</option>
+                    <option value="mois">Mois</option>
+                    <option value="annee">Année</option>
+                </select>
+                </span>
+            </div>
+            <button type="button" onclick="modifierDate('ajouter')"><i class="fa-solid fa-square-check"></i>&nbsp;Ajouter</button>
+            <button type="button" onclick="modifierDate('soustraire')"><i class="fa-solid fa-square-xmark"></i>&nbsp;Soustraire</button>
+            <div><i class="fa-solid fa-calendar-days"></i>&nbsp;<span>Nouvelle date: <span id="nouvelleDate"></span></span></div>
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend>Comparer deux dates</legend>
+        <form action="">
+            <div><i class="fa-solid fa-calendar-days"></i>&nbsp;Deuxieme date :</div>
+            <input type="date" id="date2" name="date2" required><br>
+            <button type="button" onclick="comparerDate()"><i class="fa-solid fa-calendar"></i>&nbsp;Calculer la différence</button>
+            <div><i class="fa-regular fa-clock"></i>&nbsp;<span>Différence: <span id="nouvelleDateComparaison"></span></span></div>
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend>Calculer de l'age</legend>
+        <div><i class="fa-solid fa-calendar-days"></i>&nbsp;Date de naissance :</div>
+        <input type="date" id="naissance" name="naissance" required><br>
+        <button type="button" onclick="calculerAge()"><i class="fa-solid fa-cake-candles"></i>&nbsp;Calcule Age</button>
+        <div><i class="fa-solid fa-stopwatch-20"></i>&nbsp;<span>Age: <span id="nouvelleDatebirth"></span></span></div>
+    </fieldset>
+    <fieldset>
+        <legend>Conversion De Date</legend>
+        <button onclick="convertFormats()"><i class="fa-regular fa-pen-to-square"></i>&nbsp;Convertir en differents formats</button>
+        <ul>
+            <li>ISO : <span id="isoFormat">-</span></li>
+            <li>Locale : <span id="localFormat">-</span></li>
+            <li>UTC : <span id="utcFormat">-</span></li>
+        </ul>
+    </fieldset>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        //ex01
+        function modifierDate(operation) {
+            const dateInput = document.getElementById('date').value;
+            const nbjoursInput = document.getElementById('nbjours').value;
+            const typeInput = document.getElementById('choix').value;
+
+            if (!dateInput || !nbjoursInput) {
+                alert("Veuillez remplir tous les champs.");
+                return;
+            }
+
+            const date = new Date(dateInput);
+            const nbjours = parseInt(nbjoursInput);
+
+            if (typeInput === "jour") {
+                if (operation === 'ajouter') {
+                    date.setDate(date.getDate() + nbjours);
+                } else {
+                    date.setDate(date.getDate() - nbjours);
+                }
+            } else if (typeInput === "mois") {
+                if (operation === 'ajouter') {
+                    date.setMonth(date.getMonth() + nbjours);
+                } else {
+                    date.setMonth(date.getMonth() - nbjours);
+                }
+            } else if (typeInput === "annee") {
+                if (operation === 'ajouter') {
+                    date.setFullYear(date.getFullYear() + nbjours);
+                } else {
+                    date.setFullYear(date.getFullYear() - nbjours);
+                }
+            }
+
+            document.getElementById('nouvelleDate').textContent = date.toLocaleDateString();
+        }
+            document.getElementById('nouvelleDate').style.color = "blue";
+          //ex02
+        function comparerDate() {
+            const date2Input = document.getElementById('date2').value;
+            if (!date2Input) {
+                alert("Veuillez remplir les deux dates.");
+                return;
+            }
+
+            const date1 = new Date();  
+            const date2 = new Date(date2Input);
+
+            const diffMilliseconds = Math.abs(date2 - date1); 
+
+            const diffDays = Math.floor(diffMilliseconds / ( 1000 * 60 * 60 * 24));  
+
+            document.getElementById('nouvelleDateComparaison').textContent = diffDays + " jours";
+        }
+       //ex03
+        function calculerAge() {
+            let birth = new Date(document.getElementById("naissance").value);
+            let age = new Date().getFullYear() - birth.getFullYear();
+            document.getElementById("nouvelleDatebirth").textContent = age + " ans";
+        }
+        //ex04
+        function convertFormats() {
+            let date = new Date();
+            document.getElementById("isoFormat").textContent = date.toISOString();
+            document.getElementById("localFormat").textContent = date.toLocaleDateString();
+            document.getElementById("utcFormat").textContent = date.toUTCString();
+        }
+    </script>
+</body>
+</html>

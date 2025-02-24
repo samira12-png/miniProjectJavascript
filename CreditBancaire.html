@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Crédit Bancaire</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <form class="w-50 border border-1 m-auto mt-5 p-5">
+        <h2 class="border border-5 p-2 mb-3 bg-success text-light text-center">Simulateur de Crédit Bancaire</h2>
+        <div class="row mb-4">
+            <div class="col-md-4">Montant du prêt (€):</div>
+            <div class="col-md-8">
+                <input type="number" id="montant" class="form-control" placeholder="Ex: 1000" required>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-4">Durée du prêt (mois):</div>
+            <div class="col-md-8">
+                <input type="number" id="duree" class="form-control" placeholder="Ex: 10" required>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-4">Taux d'intérêt (%):</div>
+            <div class="col-md-8">
+                <input type="number" id="taux" class="form-control" placeholder="Ex: 0.2" required>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-4">Date de début du prêt:</div>
+            <div class="col-md-8">
+                <input type="date" id="dateDebut" class="form-control" required>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <button class="btn btn-outline-success" type="button" onclick="calculerCredit()">Calculer</button>
+        </div>
+        <div class="row">
+            <span id="Results">Résultats :</span>
+        </div>
+    </form>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th class="bg-success border border-3 border-dark">Mois</th>
+                <th class="bg-secondary border border-3 border-dark">Date de début du prêt</th>
+                <th class="bg-success border border-3 border-dark">Mensualité (€)</th>
+                <th class="bg-secondary border border-3 border-dark">Capital remboursé (€)</th>
+                <th class="bg-success border border-3 border-dark">Intérêts (€)</th>
+                <th class="bg-secondary border border-3 border-dark">Solde restant (€)</th>
+            </tr>
+        </thead>
+        <tbody id="tableau"></tbody>
+    </table>
+
+    <script type="text/javascript">
+        function calculerCredit() {
+            let montant = parseFloat(document.getElementById("montant").value);
+            let duree = parseInt(document.getElementById("duree").value);
+            let taux = parseFloat(document.getElementById("taux").value) / 100;
+            let dateDebut = new Date(document.getElementById("dateDebut").value);
+
+            if (isNaN(montant) || isNaN(duree) || isNaN(taux) || montant <= 0 || duree <= 0 || isNaN(dateDebut)) {
+                alert("Veuillez entrer des valeurs valides.");
+                return;
+            }
+
+            let tauxMensuel = taux / 12;
+            let mensualite = (montant * tauxMensuel) / (1 - Math.pow(1 + tauxMensuel, -duree));
+            mensualite = mensualite.toFixed(2);
+
+            let tableau = document.getElementById("tableau");
+            tableau.innerHTML = ""; 
+            let soldeRestant = montant;
+
+            for (let i = 1; i <= duree; i++) {
+                let interets = soldeRestant * tauxMensuel;
+                let capitalRembourse = mensualite - interets;
+                soldeRestant -= capitalRembourse;
+
+                let paiementDate = new Date(dateDebut);
+                paiementDate.setMonth(paiementDate.getMonth() + i);
+
+                let row = `<tr>
+                    <td>${i}</td>
+                    <td>${paiementDate.toLocaleDateString('fr-FR')}</td>
+                    <td>${mensualite}</td>
+                    <td>${capitalRembourse.toFixed(2)}</td>
+                    <td>${interets.toFixed(2)}</td>
+                    <td>${soldeRestant.toFixed(2)}</td>
+                </tr>`;
+
+                tableau.innerHTML += row;
+            }
+        }
+
+    </script>
+</body>
+</html>

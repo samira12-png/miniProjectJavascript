@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+         legend {
+            font-size: 20px;
+            background-color: antiquewhite;
+         }
+         fieldset {
+             background-color: burlywood;
+             width: 35%;
+             margin: auto;
+             margin-top: 30px;
+             padding: 15px;
+         }
+         div {
+             margin-top: 10px;
+             font-size: 17px;
+         }
+         input {
+             padding: 5px;
+             width: 50%;
+         }
+         button {
+             padding: 10px;
+             background-color: rgba(89, 139, 89, 0.449);
+             color: rgba(35, 32, 32, 0.967);
+             border: 1px solid black;
+             cursor: pointer;
+             width: 100%;
+         }
+    </style>
+</head>
+<body>
+    <fieldset>
+        <legend>Jours de Congé</legend>
+        <div>Saisir la Date de Début des congés</div>
+        <input type="date" id="startDate">
+        <div>Nombre de jours</div>
+        <input type="number" id="daysOff">
+        <div>Exclure les week-ends&nbsp;<input type="checkbox" id="excludeWeekends"></div>
+        <div><button onclick="calculateReturnDate()">Calculer</button></div>
+        <div>Résultat: <span id="returnDate"></span></div>
+    </fieldset>
+
+    <script>
+        function calculateReturnDate() {
+            let startDate = new Date(document.getElementById("startDate").value);
+            let daysOff = parseInt(document.getElementById("daysOff").value);
+            let excludeWeekends = document.getElementById("excludeWeekends").checked;
+
+            if (isNaN(startDate.getTime()) || isNaN(daysOff) || daysOff <= 0) {
+                alert("Veuillez entrer une date valide et un nombre de jours supérieur à 0.");
+                return;
+            }
+
+            let count = 0;
+            while (count < daysOff) {
+                startDate.setDate(startDate.getDate() + 1);
+                if (excludeWeekends) {
+                    let dayOfWeek = startDate.getDay();
+                    if (dayOfWeek === 6 || dayOfWeek === 0) continue;
+                }
+
+                count++;
+            }
+
+            document.getElementById("returnDate").textContent = startDate.toLocaleDateString();
+        }
+        document.getElementById('returnDate').style.color = "brown";
+
+    </script>
+</body>
+</html>
