@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café - Commande</title>
+    <style>
+        fieldset {
+            width: 350px;
+            margin: auto;
+            background: #be902e86;
+            border-radius: 10px;
+            box-shadow: 5px 5px 5px #bab2a5;
+            padding: 15px;
+        }
+        legend {
+            background: #be902e86;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            text-align: center;
+            padding: 5px;
+            box-shadow: 5px 5px 5px #cdad77;
+        }
+        .Total {
+            border: 2px saddlebrown solid;
+            border-radius: 10px;
+            margin: auto;
+            margin-top: 10px;
+            padding: 15px;
+            background: #4c411c50;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        #calcule {
+            background-color: green;
+            color: white;
+        }
+        #valide {
+            background-color: brown;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<fieldset>
+    <legend>Bienvenue au café fictif</legend>
+
+    <h4>Liste des boissons :</h4>
+    <table border="1">
+        <tr>
+            <th>Boisson</th>
+            <th>Prix (en Dh)</th>
+            <th>Quantité</th>
+        </tr>
+        <tr>
+            <td><select id="boisson1" onchange="updatePrice(this, 'prixBoisson1')">
+                <option value="" disabled selected>Choisir une boisson</option>
+                <option value="500">Café noir - 500 Dh</option>
+                <option value="400">Café et lait - 400 Dh</option>
+                <option value="650">Jus d'orange - 650 Dh</option>
+            </select></td>
+            <td><input id="prixBoisson1" type="text" readonly></td>
+            <td><input id="qteBoisson1" type="number" min="1" value="1"></td>
+        </tr>
+        <tr>
+            <td><select id="boisson2" onchange="updatePrice(this, 'prixBoisson2')">
+                <option value="" disabled selected>Choisir une boisson</option>
+                <option value="500">Café noir - 500 Dh</option>
+                <option value="400">Café et lait - 400 Dh</option>
+                <option value="650">Jus d'orange - 650 Dh</option>
+            </select></td>
+            <td><input id="prixBoisson2" type="text" readonly></td>
+            <td><input id="qteBoisson2" type="number" min="1" value="1"></td>
+        </tr>
+        <tr>
+            <td><select id="boisson3" onchange="updatePrice(this, 'prixBoisson3')">
+                <option value="" disabled selected>Choisir une boisson</option>
+                <option value="500">Café noir - 500 Dh</option>
+                <option value="400">Café et lait - 400 Dh</option>
+                <option value="650">Jus d'orange - 650 Dh</option>
+            </select></td>
+            <td><input id="prixBoisson3" type="text" readonly></td>
+            <td><input id="qteBoisson3" type="number" min="1" value="1"></td>
+        </tr>
+    </table>
+
+    <h4>Liste des pâtisseries :</h4>
+    <table border="1">
+        <tr><th>Pâtisserie</th><th>Prix (en Dh)</th><th>Quantité</th></tr>
+        <tr>
+            <td><select id="patisserie1" onchange="updatePrice(this, 'prixPatisserie1')">
+                <option value="" disabled selected>Choisir une pâtisserie</option>
+                <option value="350">Croissant - 350 Dh</option>
+                <option value="400">Gâteau - 400 Dh</option>
+            </select></td>
+            <td><input id="prixPatisserie1" type="text" readonly></td>
+            <td><input id="qtePatisserie1" type="number" min="1" value="1"></td>
+        </tr>
+        <tr>
+            <td><select id="patisserie2" onchange="updatePrice(this, 'prixPatisserie2')">
+                <option value="" disabled selected>Choisir une pâtisserie</option>
+                <option value="350">Croissant - 350 Dh</option>
+                <option value="400">Gâteau - 400 Dh</option>
+            </select></td>
+            <td><input id="prixPatisserie2" type="text" readonly></td>
+            <td><input id="qtePatisserie2" type="number" min="1" value="1"></td>
+        </tr>
+    </table>
+    </table>
+
+    <div style="text-align: center; margin-top: 15px;">
+        <span>Liste des serveurs :</span>
+        <input type="radio" name="Serveurs" value="1"> 1
+        <input type="radio" name="Serveurs" value="2"> 2
+        <input type="radio" name="Serveurs" value="3"> 3
+    </div>
+
+    <table class="Total">
+        <tr>
+            <td>Total Boissons (en DHS):</td>
+            <td><input type="text" readonly id="total-boissons"></td>
+        </tr>
+        <tr>
+            <td>Total Pâtisseries (en DHS):</td>
+            <td><input type="text" readonly id="total-patisserie"></td>
+        </tr>
+        <tr>
+            <td>Total Consommation (en DHS):</td>
+            <td><input type="text" readonly id="total-consommation"></td>
+        </tr>
+    </table>
+
+    <button id="calcule" onclick="Calcule()">Calculer</button>
+    <button id="valide" onclick="Valide()">Valider</button>
+</fieldset>
+
+<script>
+    // function updatePrice(selectId, inputId) {
+    //     let select = document.getElementById(selectId);
+    //     let priceInput = document.getElementById(inputId);
+    //     priceInput.value = select.value ? select.value + " Dh" : "";
+    // }
+    function updatePrice(selectElement, inputId) {
+        let priceInput = document.getElementById(inputId);
+        priceInput.value = selectElement.options[selectElement.selectedIndex].value + ' Dh';
+    }
+
+
+//     function Calcule() {
+//         let boissonPrix = parseFloat(document.getElementById('Boisson').value) || 0;
+//         let boissonQte = parseInt(document.getElementById('qteBoisson').value) || 0;
+//         let patisseriePrix = parseFloat(document.getElementById('patisserie').value) || 0;
+//         let patisserieQte = parseInt(document.getElementById('qtePatisserie').value) || 0;
+
+//         let totalBoissons = boissonPrix * boissonQte;
+//         let totalPatisserie = patisseriePrix * patisserieQte;
+//         let total = totalBoissons + totalPatisserie;
+
+//         document.getElementById('total-boissons').value = totalBoissons + " Dh";
+//         document.getElementById('total-patisserie').value = totalPatisserie + " Dh";
+//         document.getElementById('total-consommation').value = total + " Dh";
+//     }
+
+//     function Valide() {
+//         let boisson = document.getElementById('Boisson').value;
+//         let patisserie = document.getElementById('patisserie').value;
+//         let serveur = document.querySelector('input[name="Serveurs"]:checked');
+
+//         if ((!boisson && !patisserie) || !serveur) {
+//             alert("Veuillez sélectionner au moins une boisson ou une pâtisserie, et choisir un serveur.");
+//             return;
+//         }
+
+//         let serveurNum = serveur.value;
+//         let boissonQte = parseInt(document.getElementById('qteBoisson').value) || 0;
+//         let patisserieQte = parseInt(document.getElementById('qtePatisserie').value) || 0;
+
+//         alert("Commande validée !\n" +
+//               "Serveur : " + serveurNum + "\n" +
+//               "Boissons consommées : " + boissonQte + "\n" +
+//               "Pâtisseries consommées : " + patisserieQte);
+//     }
+function Calcule() {
+        let totalBoissons = 0, totalPatisseries = 0;
+        for (let i = 1; i <= 3; i++) {
+            let prix = parseFloat(document.getElementById('prixBoisson' + i).value) || 0;
+            let qte = parseInt(document.getElementById('qteBoisson' + i).value) || 0;
+            totalBoissons += prix * qte;
+        }
+        for (let i = 1; i <= 2; i++) {
+            let prix = parseFloat(document.getElementById('prixPatisserie' + i).value) || 0;
+            let qte = parseInt(document.getElementById('qtePatisserie' + i).value) || 0;
+            totalPatisseries += prix * qte;
+        }
+        document.getElementById('total-boissons').value = totalBoissons + ' Dh';
+        document.getElementById('total-patisserie').value = totalPatisseries + ' Dh';
+        document.getElementById('total-consommation').value = (totalBoissons + totalPatisseries) + ' Dh';
+    }
+
+    function Valide() {
+        let serveur = document.querySelector('input[name="Serveurs"]:checked');
+        if (!serveur) {
+            alert('Veuillez choisir un serveur.');
+            return;
+        }
+        alert('Commande validée ! Serveur : ' + serveur.value);
+    }
+ </script>
+
+ </body>
+ </html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Stock</title>
+    <style>
+        body {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+        fieldset {
+            width: 60%;
+            margin: 0 auto;
+            background: #f3b2b2;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        legend {
+            font-size: 20px;
+            text-align: center;
+            background: #e66060;
+            padding: 5px;
+        }
+        input {
+            border: 2px solid #e66060;
+            height: 25px;
+            border-radius: 10px;
+            margin: 5px;
+            padding: 5px;
+        }
+        button {
+            border: 1px solid #e66060;
+            height: 35px;
+            border-radius: 10px;
+            color: white;
+            padding: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #ajouter {
+            background-color: rgba(38, 204, 38, 0.687);
+        }
+        #supp {
+            background-color: brown;
+        }
+        #rech {
+            background-color: #b39906;
+        }
+        .list {
+            border: 2px solid #e66060;
+            padding: 10px;
+            min-height: 50px;
+            background: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <fieldset>
+        <legend>Gestion de Stock</legend>
+
+        <!-- Ajouter un produit -->
+        <h4>Ajouter un produit</h4>
+        <input type="text" id="name" placeholder="Nom du produit">
+        <input type="number" id="price" placeholder="Prix du produit">
+        <button id="ajouter" type="button" onclick="ajouterProduit()">Ajouter</button>
+
+        <!-- Affichage de la liste -->
+        <h4>Liste des Produits</h4>
+        <div class="list" id="productList"></div>
+
+        <!-- Supprimer un produit -->
+        <h4>Supprimer un produit</h4>
+        <input type="text" id="supprimer" placeholder="Nom du produit">
+        <button id="supp" type="button" onclick="supprimerProduit()">Supprimer</button>
+
+        <!-- Rechercher un produit par prix -->
+        <h4>Rechercher par Prix</h4>
+        <input type="number" id="search" placeholder="Prix minimum">
+        <button type="button" id="rech" onclick="rechercherProduit()">Rechercher</button>
+        <div id="searchResult"></div>
+    </fieldset>
+
+    <script>
+        let stock = [];
+
+        function afficherStock() {
+            let list = document.getElementById('productList');
+            list.innerHTML = "";
+            stock.forEach(product => {
+                list.innerHTML += `<p>${product.nom} - ${product.prix} Dh</p>`;
+            });
+        }
+
+        function ajouterProduit() {
+            let nom = document.getElementById("name").value.trim();
+            let prix = parseFloat(document.getElementById("price").value);
+
+            if (nom === "" || isNaN(prix) || prix <= 0) {
+                alert("Veuillez entrer un nom valide et un prix positif.");
+                return;
+            }
+
+            stock.push({ nom, prix });
+            afficherStock();
+
+            document.getElementById("name").value = "";
+            document.getElementById("price").value = "";
+        }
+
+        function supprimerProduit() {
+            let nom = document.getElementById("supprimer").value.trim();
+            let index = stock.findIndex(product => product.nom.toLowerCase() === nom.toLowerCase());
+
+            if (index !== -1) {
+                stock.splice(index, 1);
+                afficherStock();
+                document.getElementById("supprimer").value = "";
+            } else {
+                alert("Produit introuvable.");
+            }
+        }
+
+        function rechercherProduit() {
+            let minPrix = parseFloat(document.getElementById("search").value);
+            if (isNaN(minPrix) || minPrix <= 0) {
+                alert("Veuillez entrer un prix minimum valide.");
+                return;
+            }
+
+            let resultat = stock.filter(product => product.prix >= minPrix);
+            let searchResult = document.getElementById("searchResult");
+            searchResult.innerHTML = "<h4>Résultats :</h4>";
+
+            if (resultat.length === 0) {
+                searchResult.innerHTML += "<p>Aucun produit trouvé.</p>";
+            } else {
+                resultat.forEach(product => {
+                    searchResult.innerHTML += `<p>${product.nom} - ${product.prix} Dh</p>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
