@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="container w-50 border border-3 p-3 mb-4 mt-3">
+        <h3 class="text-center">Éditer une Facture</h3>
+        <div class="row mb-3">
+            <div class="col-md-4">Code article :</div>
+            <div class="col-md-8"><input type="text" id="codeArticle" class="form-control"></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">Libellé :</div>
+            <div class="col-md-8"><input type="text" id="libelle" class="form-control"></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">Quantité :</div>
+            <div class="col-md-8"><input type="number" id="quantite" class="form-control"></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">Prix unitaire HT :</div>
+            <div class="col-md-8"><input type="number" id="prix" class="form-control"></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">Taux TVA :</div>
+            <div class="col-md-8">
+                <select class="form-select" id="taux">
+                    <option value="" disabled selected>Choisir une TVA</option>
+                    <option value="14">14%</option>
+                    <option value="10">10%</option>
+                    <option value="20">20%</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <button onclick="addLigne()" class="btn btn-success">Ajouter</button>
+            </div>
+            <div class="col-md-8">
+                <button onclick="calcul()" class="btn btn-primary">Calculer le total de la Facture</button>
+            </div>
+        </div>
+    </div>
+
+    <table class="container table table-hover">
+        <thead>
+            <tr>
+                <th>Code Article</th>
+                <th>Libellé</th>
+                <th>Quantité</th>
+                <th>Prix unitaire HT</th>
+                <th>Taux TVA</th>
+                <th>Prix Total TTC</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="facture"></tbody>
+    </table>
+
+    <div class="container mt-3" id="total"></div>
+
+    <script>
+        let totalFacture = 0;
+        let totalHT = 0;
+
+        function addLigne() {
+            let codeArticle = document.getElementById("codeArticle").value;
+            let libelle = document.getElementById("libelle").value;
+            let quantite = parseInt(document.getElementById("quantite").value);
+            let prix = parseFloat(document.getElementById("prix").value);
+            let taux = parseFloat(document.getElementById("taux").value);
+            
+            if (!codeArticle || !libelle || isNaN(quantite) || isNaN(prix) || isNaN(taux)) {
+                alert("Veuillez remplir tous les champs correctement.");
+                return;
+            }
+            
+            let prixHT = quantite * prix;
+            let prixTTC = prixHT * (1 + taux / 100);
+            totalHT += prixHT;
+            totalFacture += prixTTC;
+            
+            let table = document.getElementById("facture");
+            let row = table.insertRow();
+            row.innerHTML = `
+                <td>${codeArticle}</td>
+                <td>${libelle}</td>
+                <td>${quantite}</td>
+                <td>${prix.toFixed(2)} DH</td>
+                <td>${taux}%</td>
+                <td>${prixTTC.toFixed(2)} DH</td>
+                <td><button class="btn btn-danger btn-sm" onclick="supprimerLigne(this, ${prixHT}, ${prixTTC})">X</button></td>
+            `;
+            
+            // Réinitialiser les champs
+            document.getElementById("codeArticle").value = "";
+            document.getElementById("libelle").value = "";
+            document.getElementById("quantite").value = "";
+            document.getElementById("prix").value = "";
+            document.getElementById("taux").value = "";
+        }
+
+        function calcul() {
+            let totalDiv = document.getElementById("total");
+            totalDiv.innerHTML = `
+                <table class="table table-bordered">
+                    <tr><th>Total HT</th><td>${totalHT.toFixed(2)} DH</td></tr>
+                    <tr><th>Total TTC</th><td>${totalFacture.toFixed(2)} DH</td></tr>
+                </table>
+            `;
+        }
+
+        function supprimerLigne(button, prixHT, prixTTC) {
+            let row = button.parentElement.parentElement;
+            row.remove();
+            totalHT -= prixHT;
+            totalFacture -= prixTTC;
+            calcul();
+        }
+    </script>
+</body>
+</html>

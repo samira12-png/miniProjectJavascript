@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(90deg,#f5add5,rgb(152, 8, 235));
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #b073d8de;">
+        <div class="container-fluid">
+            <img src="https://cdn-icons-png.flaticon.com/512/2302/2302865.png" width="60px" alt="Library Logo">
+            <a class="navbar-brand" href="#">LIBRARY</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Service</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" id="search-input" onkeyup="searchBooks()" placeholder="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Section principale -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>Liste des Livres</h3>
+            <div class="row" id="list-books"></div>
+            <!-- <div id="details-section" class="container mt-4" style="display: none;">
+                <h3 class="text-center">📖 Détails du Livre</h3>
+                <div id="book-details" class="mt-3"></div>
+            </div> -->
+            
+        </div>
+        <div class="col-md-3">
+            <h3>Livres Sélectionnés</h3>
+            <div class="selected-books p-3 bg-light rounded-5"></div>
+                <div id="selected-books-list" class="row g-3"></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div id="details-section" class="container mt-4" style="display: none;">
+                <h3 class="text-center">📖 Détails du Livre</h3>
+                <div id="book-details" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+
+
+<script>
+const books = [
+    {
+        id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald",
+        description: "A novel set in the 1920s about the mysterious Jay Gatsby.",
+        price: 120, image: "https://m.media-amazon.com/images/I/81af+MCATTL.jpg",
+        year: 1925, comments: ["Amazing book!", "A classic."], likes: 2300
+    },
+    {
+        id: 2, title: "To Kill a Mockingbird", author: "Harper Lee",
+        description: "A novel about racial injustice in the American South.",
+        price: 140, image: "https://m.media-amazon.com/images/I/81A-mvlo+QL.jpg",  // ✅ Image corrigée
+        year: 1960, comments: ["Very touching.", "A must-read."], likes: 5000
+    },
+    {
+        id: 3, title: "1984", author: "George Orwell",
+        description: "A dystopian novel about totalitarianism and surveillance.",
+        price: 110, image: "https://m.media-amazon.com/images/I/71kxa1-0mfL.jpg",
+        year: 1949, comments: ["Still relevant today!", "Chilling."], likes: 3400
+    },
+    {
+        id: 4, title: "Pride and Prejudice", author: "Jane Austen",
+        description: "A romantic novel about love and social class.",
+        price: 130, image: "https://m.media-amazon.com/images/I/81r3FVfNG3L.jpg",
+        year: 1813, comments: ["Beautiful story!", "Love Mr. Darcy."], likes: 2800
+    },
+    {
+        id: 5, title: "The Catcher in the Rye", author: "J.D. Salinger",
+        description: "A coming-of-age novel about teenage alienation.",
+        price: 125, image: "https://m.media-amazon.com/images/I/81OthjkJBuL.jpg",
+        year: 1951, comments: ["Relatable.", "A unique perspective."], likes: 2200
+    },
+    {
+        id: 6, title: "The Hobbit", author: "J.R.R. Tolkien",
+        description: "A fantasy novel about Bilbo Baggins' adventure.",
+        price: 150, image: "https://m.media-amazon.com/images/I/91b0C2YNSrL.jpg",
+        year: 1937, comments: ["Magical!", "Loved it!"], likes: 4500
+    },
+    {
+        id: 7, title: "Harry Potter and the Sorcerer's Stone", author: "J.K. Rowling",
+        description: "The first book in the Harry Potter series.",
+        price: 160, image: "https://m.media-amazon.com/images/I/81YOuOGFCJL.jpg",
+        year: 1997, comments: ["A great start to the series!", "Magical."], likes: 8000
+    },
+    {
+        id: 8, title: "The Lord of the Rings", author: "J.R.R. Tolkien",
+        description: "An epic fantasy novel about the fight against Sauron.",
+        price: 200, image: "https://m.media-amazon.com/images/I/91b0AVx3FgL.jpg",  // ✅ Image corrigée
+        year: 1954, comments: ["A masterpiece.", "Timeless."], likes: 7000
+    },
+    {
+        id: 9, title: "Moby-Dick", author: "Herman Melville",
+        description: "A novel about Captain Ahab’s obsession with a white whale.",
+        price: 135, image: "https://m.media-amazon.com/images/I/71c1LRLBTBL.jpg",  // ✅ Image corrigée
+        year: 1851, comments: ["A deep and complex read.", "Challenging but rewarding."], likes: 1900
+    },
+    {
+        id: 10, title: "The Alchemist", author: "Paulo Coelho",
+        description: "A novel about following one's dreams.",
+        price: 140, image: "https://m.media-amazon.com/images/I/71aFt4+OTOL.jpg",
+        year: 1988, comments: ["Inspiring!", "Changed my perspective on life."], likes: 6000
+    }
+];
+
+
+
+const selectedBooks = [];
+
+function renderBooks() {
+    const listBooks = document.getElementById("list-books");
+    listBooks.innerHTML = ""; // Nettoyer avant de remplir
+    books.forEach(book => {
+        const bookElement = document.createElement("div");
+        bookElement.classList.add("col-md-4", "mb-3");
+        bookElement.innerHTML = `
+            <div class="card h-100 shadow-lg">
+                <img src="${book.image}" class="card-img-top" alt="${book.title}" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${book.title}</h5>
+                    <h6 class="text-muted">by ${book.author}</h6>
+                    <p class="text-primary fw-bold">💰 ${book.price} MAD</p>
+                    <button class="btn btn-primary mt-auto" onclick="addToSelected(${book.id})">Ajouter</button>
+                </div>
+            </div>
+        `;
+        listBooks.appendChild(bookElement);
+    });
+}
+
+function addToSelected(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!selectedBooks.includes(book)) {
+        selectedBooks.push(book);
+        displaySelectedBooks();
+
+    }
+}
+
+function displaySelectedBooks() {
+    const selectedBooksContainer = document.getElementById("selected-books-list");
+    selectedBooksContainer.innerHTML = ""; 
+
+    selectedBooks.forEach(book => {
+        const bookElement = document.createElement("div");
+        bookElement.classList.add("col-md-12");
+
+        bookElement.innerHTML = `
+            <div class="card shadow-sm p-2 d-flex flex-row align-items-center">
+                <img src="${book.image}" class="rounded" alt="${book.title}" style="width: 60px; height: 80px; object-fit: cover;">
+                <div class="ms-3">
+                    <h6 class="fw-bold m-0">${book.title}</h6>
+                    <small class="text-muted">${book.author}</small>
+                    <p class="text-primary fw-bold m-0">💰 ${book.price} MAD</p>
+                </div>
+                <button class="btn btn-danger btn-sm ms-auto" onclick="removeFromSelected(${book.id})"><i class="bi bi-trash2-fill"></i></button>
+                 <button class="btn btn-secondary btn-sm ms-auto" onclick="Detaillsbook(${book.id})"><i class="bi bi-three-dots-vertical"></i></button>
+
+            </div>
+        `;
+        selectedBooksContainer.appendChild(bookElement);
+    });
+}
+
+function removeFromSelected(bookId) {
+    const index = selectedBooks.findIndex(b => b.id === bookId);
+    if (index !== -1) {
+        selectedBooks.splice(index, 1);
+        displaySelectedBooks();
+    }
+}
+function Detaillsbook(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book) {
+        alert("Livre non trouvé !");
+        return;
+    }
+
+    const detailsContainer = document.getElementById("book-details");
+
+    detailsContainer.innerHTML = `
+        <div class="card shadow-lg p-3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="${book.image}" class="img-fluid rounded" alt="${book.title}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h4 class="card-title">${book.title}</h4>
+                                <h6 class="text-muted">👤 Auteur: ${book.author}</h6>
+                                <p class="card-text">📅 Année: ${book.year}</p>
+                                <p class="card-text">💰 Prix: <strong class="text-primary">${book.price} MAD</strong></p>
+                                <p class="card-text">${book.description}</p>
+                                <p class="text-danger"><i class="bi bi-heart-fill"></i> ${book.likes} Likes</p>
+                                <button class="btn btn-secondary mt-2" onclick="closeDetails()">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="mt-3">📝 Commentaires :</h5>
+                    <ul class="list-group">${book.comments}</ul>
+                </div>
+    `;
+
+    document.getElementById("details-section").style.display = "block";
+}
+
+
+        function closeDetails() {
+            document.getElementById("details-section").style.display = "none";
+        }
+//     //     function searchBooks() {
+//     // const query = document.getElementById("search-input").value;
+//     // renderBooks(query);
+// }
+
+renderBooks();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

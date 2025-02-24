@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Étudiants</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="container w-75 p-4 m-auto mt-5 border rounded-5" style="background-color: rgb(131, 187, 204);">
+        <h1 class="text-center">Gestion des Étudiants</h1>
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" id="num" placeholder="Numéro de l'étudiant" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <input type="text" id="nom" placeholder="Nom de l'étudiant" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <input type="number" id="note" placeholder="Note" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <button type="button" class="btn btn-info" id="btnAjouter" onclick="ajouterEtudiant()">Ajouter</button>
+            </div>
+        </div>
+        <table class="table table-hover mt-4">
+            <thead>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Nom</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="etudiant"></tbody>
+        </table>
+
+    <script>
+        let etudiants = [
+            {num: 1, nom: "Toto", note: 10},
+            {num: 2, nom: "Tata", note: 15},
+            {num: 3, nom: "Titi", note: 12}
+        ];
+
+        // Fonction pour afficher les étudiants
+        const displayEtudiants = () => {
+            const tbody = document.getElementById("etudiant");
+            tbody.innerHTML = "";
+
+            etudiants.forEach(etudiant => {
+                const row = document.createElement("tr");
+                row.id = `row-${etudiant.num}`;
+                row.innerHTML = `
+                    <td>${etudiant.num}</td>
+                    <td>${etudiant.nom}</td>
+                    <td>${etudiant.note}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="supprimerEtudiant(${etudiant.num})"><i class="bi bi-trash3-fill"></i></button>
+                        <button class="btn btn-warning" onclick="modifierEtudiant(${etudiant.num})"><i class="bi bi-pencil"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+
+        // Fonction pour ajouter un étudiant
+        const ajouterEtudiant = () => {
+            const num = document.getElementById("num").value;
+            const nom = document.getElementById("nom").value;
+            const note = document.getElementById("note").value;
+
+            if (num === "" || nom === "" || note === "") {
+                alert("Veuillez remplir tous les champs !");
+                return;
+            }
+
+            if (etudiants.some(etudiant => etudiant.num == num)) {
+                alert("Ce numéro existe déjà !");
+                return;
+            }
+
+            etudiants.push({ num: Number(num), nom, note: Number(note) });
+            displayEtudiants();
+            document.getElementById("num").value = "";
+            document.getElementById("nom").value = "";
+            document.getElementById("note").value = "";
+        };
+
+        // Fonction pour supprimer un étudiant
+        const supprimerEtudiant = (num) => {
+            etudiants = etudiants.filter(etudiant => etudiant.num != num);
+            displayEtudiants();
+        };
+
+        // Fonction pour modifier un étudiant
+        const modifierEtudiant = (num) => {
+            const etudiant = etudiants.find(e => e.num == num);
+            if (!etudiant) return;
+
+            const row = document.getElementById(`row-${num}`);
+            row.innerHTML = `
+                <td>${etudiant.num}</td>
+                <td><input type="text" id="edit-nom-${num}" class="form-control" value="${etudiant.nom}"></td>
+                <td><input type="number" id="edit-note-${num}" class="form-control" value="${etudiant.note}"></td>
+                <td>
+                    <button class="btn btn-success" onclick="validerModification(${num})"><i class="bi bi-check-circle"></i></button>
+                    <button class="btn btn-secondary" onclick="displayEtudiants()"><i class="bi bi-x-circle"></i></button>
+                </td>
+            `;
+        };
+
+        // Fonction pour valider la modification
+        const validerModification = (num) => {
+            const newNom = document.getElementById(`edit-nom-${num}`).value;
+            const newNote = document.getElementById(`edit-note-${num}`).value;
+
+            if (newNom === "" || newNote === "") {
+                alert("Les champs ne peuvent pas être vides !");
+                return;
+            }
+
+            etudiants = etudiants.map(etudiant => 
+                etudiant.num == num ? {...etudiant, nom: newNom, note: Number(newNote)} : etudiant
+            );
+
+            displayEtudiants();
+        };
+
+        displayEtudiants();
+    </script>
+</body>
+</html>

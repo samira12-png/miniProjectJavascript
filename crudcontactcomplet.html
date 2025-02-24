@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container m-auto p-4 mt-5 w-75" style="background-color: rgb(154, 199, 253); border-radius: 10px;">
+        <h2 class="text-center text-bg-secondary p-2 rounded-4">Gestion des Contacts</h2>
+        <div class="row mt-4">
+            <input type="text" id="nom" placeholder="Nom" class="form-control" required>
+        </div>
+        <div class="row mt-4">
+            <input type="email" id="email" placeholder="Email" class="form-control" name="email" required>
+        </div>
+        <div class="row mt-4">
+            <input type="tel" id="telephone" placeholder="Telephone" class="form-control" required>
+        </div>
+        <div class="row mt-4">
+            <input class="form-control mb-2" type="text" id="img" placeholder="Image URL" required>
+        </div>
+        <div class="row mt-4">
+            <button class="btn btn-primary" onclick="save()">Enregistrer</button>
+        </div>
+        <div class="row mt-4">
+            <input class="form-control me-2" type="search" placeholder="Search" name="searchInput" aria-label="Search" oninput="filter()">
+        </div>
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Img</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Telephone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="contacts"></tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        let contactList = [];
+        let editIndex = -1; // Variable pour suivre l'index du contact à éditer
+
+        function save() {
+            let nom = document.getElementById("nom").value;
+            let email = document.getElementById("email").value;
+            let telephone = document.getElementById("telephone").value;
+            let img = document.getElementById("img").value;
+
+            if (editIndex === -1) {
+                // Ajouter un nouveau contact
+                const contact = {
+                    id: contactList.length + 1,
+                    nom: nom,
+                    email: email,
+                    telephone: telephone,
+                    img: img
+                };
+                contactList.push(contact);
+            } else {
+                // Modifier le contact existant
+                contactList[editIndex] = {
+                    id: contactList[editIndex].id,
+                    nom: nom,
+                    email: email,
+                    telephone: telephone,
+                    img: img
+                };
+                editIndex = -1; // Réinitialiser l'index d'édition
+            }
+
+            displayContacts();
+            clearInputs();
+        }
+
+        function displayContacts() {
+            const contacts = document.getElementById("contacts");
+            contacts.innerHTML = '';
+            contactList.forEach(contact => {
+                let row = `
+                    <tr>
+                        <td>${contact.id}</td>
+                        <td><img src="${contact.img}" alt="${contact.nom}" width="50" height="50"></td>
+                        <td>${contact.nom}</td>
+                        <td>${contact.email}</td>
+                        <td>${contact.telephone}</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="EditContact(${contact.id})"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-danger" onclick="DeleteContact(${contact.id})"><i class="bi bi-trash3-fill"></i></button>
+                        </td>
+                    </tr>
+                `;
+                contacts.innerHTML += row;
+            });
+        }
+
+        function clearInputs() {
+            document.getElementById("nom").value = '';
+            document.getElementById("email").value = '';
+            document.getElementById("telephone").value = '';
+            document.getElementById("img").value = '';
+        }
+
+        function DeleteContact(id) {
+            contactList = contactList.filter(contact => contact.id !== id);
+            displayContacts();
+        }
+
+        function EditContact(id) {
+            const contact = contactList.find(contact => contact.id === id);
+            if (contact) {
+                document.getElementById("nom").value = contact.nom;
+                document.getElementById("email").value = contact.email;
+                document.getElementById("telephone").value = contact.telephone;
+                document.getElementById("img").value = contact.img; 
+                editIndex = contactList.indexOf(contact); 
+            }
+        }
+
+        function filter() {
+            const searchValue = document.querySelector('input[name="searchInput"]').value.toLowerCase();
+            const filteredContacts = contactList.filter(contact => contact.nom.toLowerCase().includes(searchValue));
+            const contacts = document.getElementById("contacts");
+            contacts.innerHTML = '';
+            filteredContacts.forEach(contact => {
+                let row = `
+                    <tr>
+                        <td>${contact.id}</td>
+                        <td><img src="${contact.img}" alt="${contact.nom}" width="50" height="50"></td>
+                        <td>${contact.nom}</td>
+                        <td>${contact.email}</td>
+                        <td>${contact.telephone}</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="EditContact(${contact.id})"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-danger" onclick="DeleteContact(${contact.id})"><i class="bi bi-trash3-fill"></i></button>
+                        </td>
+                    </tr>
+                `;
+                contacts.innerHTML += row;
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
